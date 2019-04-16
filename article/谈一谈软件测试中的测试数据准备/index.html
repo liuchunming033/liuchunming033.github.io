@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="刘春明的博客">
+    <meta name="keyword"  content="测试开发，Python">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          谈一谈软件测试中的测试数据准备 - Chunming Liu | Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://www.liuchunming.net/article/谈一谈软件测试中的测试数据准备/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="../../css/beantech.min.css">
+
+    <link rel="stylesheet" href="../../css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="../../css/highlight.css">
+
+    <link rel="stylesheet" href="../../css/widget.css">
+
+    <link rel="stylesheet" href="../../css/rocket.css">
+
+    <link rel="stylesheet" href="../../css/signature.css">
+
+    <link rel="stylesheet" href="../../css/toc.css">
+
+    <link rel="stylesheet" href="../../css/valine.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+
+    <!--不蒜子-->
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('/img/article_header/balloon.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#软件测试" title="软件测试">软件测试</a>
+                            
+                        </div>
+                        <h1>谈一谈软件测试中的测试数据准备</h1>
+                        <h2 class="subheading">测试数据准备方法以及未来的发展方向</h2>
+
+                        <!--文章访问量统计-->
+                        
+                            <span id="busuanzi_container_page_pv">本文已被阅读过<span id="busuanzi_value_page_pv"></span>次</span>
+                        
+                        <!--文章访问量统计-->
+
+                        <span class="meta">
+                            Posted by Chunming Liu on
+                            2019-04-16
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Chunming Liu</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+                        <li>
+                            <a href="/about/" >About</a>
+                        </li>
+                    
+                        <li>
+                            <a href="/archive/" >Archives</a>
+                        </li>
+                    
+                        <li>
+                            <a href="/tags/" >Tags</a>
+                        </li>
+                    
+
+                    <!-- 
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                     -->
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+                <blockquote>
+<p>测试数据的准备，是软件测试工作中非常重要的环节，无论是手工测试还是自动化测试都避不开测试数据准备工作。今天我们就来聊一聊测试工作中常用的测试数据准备的方法，深入了解各自的优缺点和使用场景，以及测试数据准备工作未来的发展方向。</p>
+</blockquote>
+<h2 id="常见的测试数据准备方法">常见的测试数据准备方法</h2>
+<p>我总了一下我曾经过用过的生成测试数据的方法，主要有以下几类：</p>
+<ul>
+<li>基于GUI的测试数据生成方法</li>
+<li>基于API的测试数据生成方法</li>
+<li>基于DB的测试数据生成方法</li>
+<li>基于MQ的测试数据生成方法</li>
+<li>基于第三方库方式的测试数据生成方法</li>
+<li>综合运用上述方法生成测试数据</li>
+</ul>
+<p>接下来，我们一起详细分析一下各种方法的有权点以及适用场景。</p>
+<h3 id="基于gui准备测试数据">基于GUI准备测试数据</h3>
+<p>基于GUI界面进行测试数据准备，是最原始的创建测试数据的方法，这种方法其实是采用E2E的方法来执行业务场景，然后得到测试数据。</p>
+<p>比如，测试用户登录功能，那么需要准备的测试数据就是用户账号，为此我们可以通过APP或者WEB端的GUI页面注册新用户，然后用这个用户完成用户登录功能的测试。</p>
+<p>这种方法的优点是简单直接，创建的数据来自于真实的业务流程，最大程度保证了数据的正确性和完整性。在很多手工测试的场景中，这种方法被普遍采用。</p>
+<p>但是，这种方法的缺点也非常明显，主要体现在以下几个方面：</p>
+<ul>
+<li><strong>创建测试数据的效率低，不适合批量生成测试数据。</strong> 因为通过GUI操作每次只能创造一条数据，而且通过手工操作GUI的过程也是比较耗时。</li>
+<li><strong>基于GUI的测试数据生成方法不适合为自动化测试提供数据。</strong> 由于自动化测试往往是通过代码来准备测试数据，而GUI方法生成测试数据的方法不太适合封装成代码被自动化测试用例调用。因为封装GUI方式生成测试数据的方法，本质上是在开发GUI自动化测试用例，而我们知道无论是开发工作量还是执行效率，亦或是稳定性方面，这种方法都是不是最佳的选择。</li>
+<li><strong>会引入不必要的测试依赖。</strong> 比如测试用户登录功能，如果依赖GUI先注册一个用户，那么就意味着注册功能必须是没问题的，引入了依赖。这种情况，从数据库中找到一个已注册的账号来测试登录功能才是最佳选择。</li>
+</ul>
+<p>在前后台配合的手工测试中，比如内容管理系统CMS和手机APP的测试，如果要手工测试手机APP的文章列表功能，那么就可以采用这种方法。除此之外，基于GUI操作生成测试数据的场景并不多。</p>
+<p>基于GUI生成测试数据的方法，有一个非常重要的价值是帮助我们在创建测试数据的过程中，找到创建数据的过程中都调用了哪些API以及修改了哪些DB的表。只有了解了这两个方面，我们后续通过API或者修改DB方式创建测试数据时，才能保证数据的完整性。</p>
+<h3 id="基于api准备测试数据">基于API准备测试数据</h3>
+<p>通过调用API生成测试数据，是目前测试数据生成的主要方法。由于后台接口一般比较稳定，大大提供了测试数据构造的准确性和成功率。调用接口相比GUI操作也能够比较快速的创建测试数据，效率高。另外，由于我们直接给API传递参数，通过参数的组合可以构造成某些GUI方法不能构造出来的测试数据。</p>
+<p>那么，我们如何获取到这些API呢？通常推荐按照下面的顺序，来查找API相关的信息。</p>
+<ol>
+<li><strong>API接口文档。</strong> 通常成熟的开发团队，都会编写API的接口文档，接口文档中会详细描述接口的URI和调用参数，这是最直接有效的办法。</li>
+<li><strong>通过抓包。</strong>  抓包在测试中是非常常用的辅助手段，我们可以在操作APP或者WEB页面的时候，对操作进行抓包，通过对抓取到的请求包，分析接口的各种参数。这也是相对高效的办法。</li>
+<li><strong>查看日志文件。</strong> 对于已经上线的接口，我们可以通过服务的日志，来查看接口调用过程中的URI和参数等内容。</li>
+<li><strong>阅读源码。</strong> 如果前面三种方法都不能用，那么可以在Gitlab上查看开发人员的项目代码，通过阅读代码的方法，找到接口请求的各种参数。</li>
+</ol>
+<p>通过API构造测试数据的方法也不是完美的，主要有几个方面：</p>
+<ol>
+<li><strong>不是所有的数据创建都有对应的API。</strong></li>
+<li><strong>有时候需要顺序调用多个API。</strong> 有时候测试数据之间是有关联关系的，为了保证测试数据的完整性和一致性，需要依次调用多个API，无形中增加了测试数据准备的复杂性。</li>
+</ol>
+<p>调用API创建测试数据，天生适合与自动化测试相结合，在实际的测试实践中，我们往往会把API封装成测试数据准备函数供自动化测试用例使用。当API内部逻辑有修改时，我们依旧可以通过封装函数来准备测试数据，对测试用例来说，是完全透明的。</p>
+<p>这里所说的API指的是基于HTTP协议的Restful API。但是可以扩展到其他协议的各种调用接口，比如MQTT协议、RPC协议等。</p>
+<h3 id="基于db准备测试数据">基于DB准备测试数据</h3>
+<p>通过往数据库中直接插入数据，也是非常常用的构造测试数据的方法。具体做法是，将创建测试数据的SQL语句封装成一个个测试数据生成函数，当我们创建数据时，直接调用这些封装好的函数即可。这种方法有一个非常大的优点是生成测试数据的效率非常高，可以短时间内往数据库中插入大量的测试数据。</p>
+<p>以用户登录功能测试为例，当我们调用API进行用户注册时，这个API会将用户的详细的信息插入到user表和role表两个数据库表中。如果我们采用数据库方式创造数据时，给user表和role表分别插入对应的数据就完成了用户的注册。我们还可以直接使用DB中已有的数据作为我们的测试数据，从而省去了很多操作。</p>
+<p>这里的前提是，你必须知道进行新用户注册时，到底涉及到了哪些数据库的表。最直接的办法就是跟开发同学索要SQL语句，或者查看源代码。</p>
+<p>这种构造测试数据的方法也不是完美的，主要体现在以下几个方面：</p>
+<ol>
+<li><strong>有的测试数据准备涉及到的数据表太多。</strong> 导致封装和维护测试准备函数的成本比较高。</li>
+<li><strong>容易出现数据不完整和不一致。</strong> 比如服务A某一个业务，实际会在服务A的数据库表A和数据库表B中分别插入数据，并且同时会给kafka的某个topic发送数据供服务B消费处理后持久化到服务B的数据库表C中。如果我们漏掉了某个数据库表的插入操作，可能会导致数据的不完整和不一致。</li>
+</ol>
+<p>基于DB准备测试数据的方法，通常作为API方法的补充。</p>
+<h3 id="基于mq准备测试数据">基于MQ准备测试数据</h3>
+<p>在微服务架构中，通常会存在通过消息中间件将多个服务进行解耦，为了减少测试工作的依赖，通常会往kafka中构造测试数据。</p>
+<p>比如，两个服务是通过KAFKA进行消息传递的，两个服务分别作为kafka的生成者和消费者。当我们测试作为消费者的服务时，就可以编写kafka的producer代码，往kafka中生产测试所需要的测试数据。具体的做法与通过DB构造测试数据的方式类似，将kafka的producer代码封装成测试数据生成函数，当我们创建数据时，直接调用这些封装好的函数即可。</p>
+<p>这种做法和操作DB并没有本质不同，其优点和缺点也是类似的。</p>
+<h3 id="基于第三方库准备测试数据">基于第三方库准备测试数据</h3>
+<p>我们的测试实践中，经常会需要生成很多随机的数据，对于这类需求，直接使用代码封装成函数生成数据。拿python为例，可以自己结合random()之类的函数随机生成数据，还可以使用faker（<a href="https://github.com/joke2k/faker" target="_blank" rel="noopener">项目地址</a>）这样的第三方库来实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">from faker import Factory</span><br><span class="line"></span><br><span class="line">fake = Factory().create(&apos;zh_CN&apos;)</span><br><span class="line"></span><br><span class="line">def random_phone_number():</span><br><span class="line">    &apos;&apos;&apos;随机手机号&apos;&apos;&apos;</span><br><span class="line">    return fake.phone_number()</span><br><span class="line"></span><br><span class="line">def random_name():</span><br><span class="line">    &quot;&quot;&quot;随机姓名&quot;&quot;&quot;</span><br><span class="line">    return fake.name()</span><br><span class="line"></span><br><span class="line">def random_address():</span><br><span class="line">    &quot;&quot;&quot;随机地址&quot;&quot;&quot;</span><br><span class="line">    return fake.address()</span><br><span class="line"></span><br><span class="line">def random_email():</span><br><span class="line">    &quot;&quot;&quot;随机email&quot;&quot;&quot;</span><br><span class="line">    return fake.email()</span><br></pre></td></tr></table></figure>
+<p>这类生成测试数据的方法试用的场景是，对数据本身的值不关心但是测试中又必须需要这些参数的情况。</p>
+<h3 id="综合运用上述方法准备测试数据">综合运用上述方法准备测试数据</h3>
+<p>在实际工作中，很少使用单一的方法就能满足测试的需求，往往是综合运用上述各种方法、一个典型的应用场景是，通过API生成最基础的测试数据，比如车辆的vid，然后使用数据库和MQ的方法是生成符合测试需要的车辆状态数据。</p>
+<p>我以上报车辆状态数据的测试为例子，来分享一下具体的如何将API调用和MQTT协议的方法结合起来构造测试数据。</p>
+<p>比如我们要测试云端对车辆上报的报警数据的处理是否符合要求。首先，我们需要通过调用注册Vechile ID的接口来注册一台车并且获得车辆证书，通过调用这个接口我们可以得到一个车辆的ID以及证书数据。再结合MQTT协议产生车辆的报警数据。</p>
+<p>为了构造测试数据的更加便捷，我们往往是对上面的操作进行封装。用封装后的方法产生测试数据。</p>
+<h2 id="准备测试数据的时机">准备测试数据的时机</h2>
+<p>前面介绍了准备测试数的方法，那么应该在什么时候创建好所需要的测试数据。是在测试用例执行中创建测试数据（On-the-Fly方法）还是在测试执行前就准备好测试数据（Out-of-Box方法）。</p>
+<p>其实，创建测试数据的时机要根据实际的需要来。主要参考一下几个因素：</p>
+<ol>
+<li><strong>创建测试数据所需要的时间。</strong>  如果创建数据需要花很长时间，那么最好采用Out-of-Box方法，在测试执行之前就准备好，以减少整个测试执行的时间。</li>
+<li><strong>测试数据是否需要经常变动。</strong> 如果测试数据不需要经常变动，那么最好采用Out-of-Box方法。如果事先生成数据在测试用例中会失效，比如具有有效期的数据，那么就适合采用On-the-Fly方法，在测试执行中创建。</li>
+<li><strong>测试数据是否存在于很多系统。</strong>  如果测试数据需要在很多系统中都要创建各自的部分，各自又有很多依赖关系，那么就适合Out-of-Box方法。因为在测试用例执行中创建，会导致测试代码比较臃肿，不够清晰。</li>
+<li><strong>构造测试数据的服务是否稳定。</strong> 在不太稳定的服务中构造测试数据，会产生大量构造测试数据失败的情况。这种情况下采用Out-of-Box方法还是比较明智的。</li>
+</ol>
+<p>接下来，我们详细看一下On-the-Fly方法和Out-of-Box方法各自的特点，以及适用场景。</p>
+<h3 id="实时创建on-the-fly">实时创建（On-the-Fly）</h3>
+<p>实时生成测试数据的方法，指的是在测试用例代码执行过程中即时创建测试数据。比如，测试车辆驾驶中，不能执行远程控制命令的场景。在测试执行中，可以通过封装的MQ方法设置测试车辆的车辆状态处于驾驶中，接下来就可以测试远程执行命令了。</p>
+<p>On-the-Fly方法创造的测试数据通常是对每一个测试用例起作用的，不同的测试用例都有自己专属的测试数据。像这种车辆状态数据就适合采用On-the-Fly方法创造，这种状态数据通常是每个测试用例都不同。这种构造测试数据的好处是，避免测试数据在测试用例执行前被修改而产生非预期的测试结果。这样的测试数据使用完之后，通常在测试用例结束之后，恢复成原始数据，避免影响其他测试用例。</p>
+<p>在自动化测试发展早期，测试实践中通常都会这种方法，也是比较好的方法。他解决了测试用例之间数据之间干扰的问题，也避免了测试完之后的脏数据问题。但是随着软件架构的发展，以及测试频率的提高，这种方式的弊端也逐渐显示出来了，主要有以下几个方面：<br>
+<strong>首先，有的测试数据比较耗时。</strong> 在测试用例执行过程中实时创建测试数据，会导致测试用例执行的时间被拉长。如果测试用例特别多，测试频率又特别高，那么测试时间就变得特别长，这显然不适合现在互联网软件的迭代节奏。为了解决测试耗时的问题，可以采用Out-of-Box方法。<br>
+<strong>其次，测试数据本身之间复杂的关联性导致构造困难。</strong> 很多时候，你为了测试某一个场景，需要构造一堆相关联的测试数据，也是偏向业务链后台的测试数据，这个问题越明显。</p>
+<p>比如，要测试被授权人对车执行远程控制命令的场景。会需要车主账号、被授权人账号、车辆ID、车辆ID与车主账号绑定，车主给被授权人授权车辆等前置数据。如果在测试用例执行中准备这些测试数据，那肯定是崩溃的。如果每一个测试用例都这么做，一定会导致测试时间变得非常长。为了解决这个问题，可以考虑将一部分稳定的数据事先创建好，比如车主账号、被授权人账号、车辆ID以及授权关系等数据。</p>
+<p><strong>微服务架构的流行导致成功生成测试数据的稳定性降低</strong>  现在大量互联网应用采用微服务架构，不同功能划分为更多的微服务独立开发和部署，很多时候测试环境里面，这些微服务并不是100%可用的。也就是说，不是任何时候构造测试数据都能成功。比如你测试的微服务B，需要依赖微服务A构造数据，而这时候正好微服务A不可用，这就block了微服务B的测试。</p>
+<p>为了解决上面的问题，事先准备测试数据的Out-of-Box方法，就有了用武之地。</p>
+<h3 id="提前准备out-of-box">提前准备（Out-of-Box）</h3>
+<p>Out-of-Box方法，指的是在测试用例执行前，就已经准备好了所用的全部或者部分测试数据，而不是在测试用例中实施创建。因此，执行测试用例时候，可以节省不少准备测试数据的时间，同时也避免因为依赖的测试数据准备服务不可用导致测试被block的情况。</p>
+<p>那么Out-of-Box方法是否也存在缺点呢？</p>
+<p>最主要的问题是**“有效性”**问题，就是有测试执行中发现测试数据不可用的风险。比如，测试被授权人远程执行车控命令的场景，当你执行测试时，发现被授人的身份已经被车主账号删掉了，这样就导致测试用例执行失败，也就不能顺利完成测试了。</p>
+<p>由此可见，这些实现创建好的测试数据，有可能在测试用例执行时已经不可用了，因为这些数据有可能已经进行了非预期的修改。比如，在其他测试用例执行时，使用了这个测试数据，并修改了这些数据的状态。</p>
+<p>为了解决这个问题，我们通常采用优化测试管理流程，让不同的测试人员、测试业务都有自己独立的测试数据，并且统计在confluence、jira或者其他公共平台上，大家严格遵守，不要乱用测试数据。</p>
+<p>另外，Out-of-Box方法不适合准备，只能被使用一次的测试数据，只会使用一次的测试数据还是采用On-the-Fly方法准备比较合适。</p>
+<p>实际工作中，我们通常是采用On-the-fly 和 Out-of-box 这两种方式相结合的方式来准备测试数据。我们可以根据测试目的的不同，将测试数据划分为“固定数据”和“易变数据”。比如某些测试场景中，车辆ID、车辆Profile、车主账号等信息是相对稳定、不经常变化的数据，那么我们可以将这些测试数据称为“固定数据”，这类数据适合采用Out-of-box方式创建。但是在某些测试场景中，比如车辆ID的注销，车辆Profile的变更测试，那么车辆ID、车辆Profile就不能叫做“固定数据”而是应该叫做“灵活数据”，这类数据适合采用 On-the-fly 方式准备。</p>
+<p>综合运用这两类方法，可以满足大部分测试数据准备的场景。可以解决准备测试数据耗时长、准备测试数据成功率不高等问题。</p>
+<h2 id="构造测试数据的痛点及应对">构造测试数据的痛点及应对</h2>
+<p>前面，我们分析了两种准备测试数据的时机以及各自的优缺点。那么我们实际工作中，准备测试数据的工作有哪些痛点，我们又该如何解决呢？</p>
+<h3 id="调用封装函数的复杂性">调用封装函数的复杂性</h3>
+<p>前面提到封装API到一个函数，然后调用这个函数来构造测试数据的方法。但是这种封装方式会有问题，就是如果参数非常多，那么你调用它来构造数据时，就要准备这些参数。如果这些参数是基本类型的话还好，如果参数本身也是对象的话，可能就会更加麻烦了，因为你要创建这些对象。而创建这些对象，有可能要继续调用其他封装的函数，从而牵连出一系列函数调用的操作。</p>
+<p>比如，调用这样一个封装了注册车辆vid的函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">def  register_vehicle(vin, color, plate_number, model, misc):</span><br><span class="line">    # 封装的处理过程</span><br><span class="line">	retrun vid</span><br><span class="line">	</span><br><span class="line">vin=&quot;chunming12345678997&quot;</span><br><span class="line">color=&quot;blue&quot;</span><br><span class="line">plate_number=&quot;D12345&quot;</span><br><span class="line">model=&quot;PAD8&quot;</span><br><span class="line">misc=&quot;demo&quot;</span><br><span class="line">vid = register_vehicle(vin, color, plate_number, model, misc)</span><br></pre></td></tr></table></figure>
+<p>由此可见，每次使用封装的函数准备测试数据时，我们要给函数传递所有的参数。其实大多数测试场景下，所有参数都可以给一个默认值，用这个函数准备测试数据时，只需要给那些有明确要求的参数传值，其他参数保持默认值即可。这样封装的函数就变成这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">def  register_vehicle(vin=&quot;chunming&quot;, color=&quot;blue&quot;, plate_number=&quot;D12345&quot;, model, misc=&quot;demo&quot;):</span><br><span class="line">    # 封装的处理过程</span><br><span class="line">	retrun vid</span><br><span class="line">	</span><br><span class="line">vin=&quot;chunming12345678997&quot;</span><br><span class="line">vid = register_vehicle(vin=vin)</span><br></pre></td></tr></table></figure>
+<p>这样，大大减少了调用封装函数的成本。当测试用例中只需要一个特定vin的车辆时，只需要给register_vehicle传递参数vin的值，其他的测试用例不关心的参数都可以保持默认值。</p>
+<h3 id="封装函数的版本管理">封装函数的版本管理</h3>
+<p>通常我们封装函数是给所有的测试项目共同使用的，这样才能最大化封装函数的价值。共享封装函数的办法通常是将其打包，然后在其他项目中引用。如果你的测试项目是使用Python，那么可以将封装的函数用setuptools打包上传到公司的Pypi平台，在测试的项目中用pip安装。如果你的测试是使用Java，可用Maven将封装函数打成Jar包并上传到公司的私有仓库，在测试项目中的pom.xml中引入jar包就好了。</p>
+<p>现在的互联网应用版本迭代更新特别快，导致封装函数也要对应的迭代更新。这就会产生数据准备函数的包升级更新比较频繁，包的版本号就要随着变化。所以引用了这些数据准备函数包的项目，就要更新包的版本。给使用者带来了一些麻烦。</p>
+<p>为了解决项目对封装函数的依赖问题，我们可以将其做成Restful API，这样使用者就免去了频繁更新这些依赖包的麻烦。而且Restful API天生的跨平台支持，让调用方不管是用Java写测试用例还是Python写测试用例，都可以得到完美的支持。接下来我们就详细介绍一下基于Restful API的测试数据准备方案。</p>
+<h2 id="统一测试数据生成平台">统一测试数据生成平台</h2>
+<p>前面介绍了创建测试数据的主要方法、创建测试数据的时机，以及测试数据生成中的痛点。随着测试技术的发展，测试数据准备技术与架构也需要逐步进化，来满足互联网微服务架构的发展趋势以及快速迭代的特点。</p>
+<p>现在业界，将测试数据准备的工作进行平台化，逐渐成为测试数据准备方案的发展方向。而Restful API的测试数据准备方案，正好适合平台化的发展方向。我们可以将基于 Java 开发的数据准备函数用 Spring Boot包装成Restful API，或者将基于Python开发的数据准备函数用<a href="http://flask.pocoo.org/" target="_blank" rel="noopener">Flask</a>或者<a href="https://www.django-rest-framework.org/" target="_blank" rel="noopener">Django REST framework</a>包装成Restful API。</p>
+<p>这样一来，测试人员可以通过Restful API调用来准备测试数据了，由于HTTP协议是跨平台的，所以几乎所有的测试框架都可以直接使用这些Restful API准备测试数据。由于使用Restful API提供测试数据，这样方便我们将提供各类测试数据的服务整合到一起，形成“统一测试数据生成平台”。结合Swagger提供的界面化文档，可以方便看到接口调用的方法，并且可以直接在界面上调用接口生成数据。既满足自动化测试的需要，也能满足手工测试的需求。</p>
+<p>目前为止，我们将测试数据准备工作进行了服务化，下图就是一个统一测试数据生成平台的Restful API 界面：<br>
+<img src="/img/article/test-data-platform.png" alt=""><center>统一测试数据平台Restful API UI 界面</center></p>
+<p>&quot;统一测试数据生成平台&quot;既可以封装业务接口提供基于业务场景的真实数据，也可以整个Mock框架解决服务间依赖问题。我们还可以引入一个内部数据库，用来存放生成的测试数据以及元数据，来记录测试数据使用者、测试数据创建时间等，用于对测试数据的进一步管理。有了统一测试数据平台，我们还可以做很多扩展性的功能对测试数据进行维护，大大方便了测试工作。</p>
+<h2 id="总结">总结</h2>
+<p>本篇文章我们梳理了测试数据准备的各种方法，并分析了各自的优缺点及适用场景。测试数据准备的时机上看，对于不常改变的数据适合采用提前准备的方法，对于经常变化的数据在测试用例中准备更好。对测试工作中数据准备的痛点进行了剖析并给出了应对方案。最后，给出了解决测试数据生成痛点的终极解决方案——“统一测试数据生成平台”。</p>
+<p>后面，我将专门写一篇博文，介绍如何从0搭建统一测试数据平台。</p>
+
+                <!-- 相关文章 -->
+	           
+		          
+
+    <div class="recommended_posts">
+        <h2><span style="font-size:1em">相关文章</span></h2>
+        <ul>
+            
+                <li><a href="https://www.liuchunming.net/article/Hexo博客入门/">Hexo博客入门</a></li>
+            
+        </ul>
+    </div>
+
+	           
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/article/Hexo博客入门/" data-toggle="tooltip" data-placement="top" title="Hexo博客入门">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                <!--打赏-->
+                <br>
+                <!--分享-->
+                
+                <!--分享-->
+                <br>
+
+                <!--加载valine-->
+                
+
+                <!--加载valine-->                      
+                <!-- require APlayer -->
+                
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+
+            </div>
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#常见的测试数据准备方法"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">&#x5E38;&#x89C1;&#x7684;&#x6D4B;&#x8BD5;&#x6570;&#x636E;&#x51C6;&#x5907;&#x65B9;&#x6CD5;</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#基于gui准备测试数据"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">&#x57FA;&#x4E8E;GUI&#x51C6;&#x5907;&#x6D4B;&#x8BD5;&#x6570;&#x636E;</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#基于api准备测试数据"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">&#x57FA;&#x4E8E;API&#x51C6;&#x5907;&#x6D4B;&#x8BD5;&#x6570;&#x636E;</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#基于db准备测试数据"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">&#x57FA;&#x4E8E;DB&#x51C6;&#x5907;&#x6D4B;&#x8BD5;&#x6570;&#x636E;</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#基于mq准备测试数据"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">&#x57FA;&#x4E8E;MQ&#x51C6;&#x5907;&#x6D4B;&#x8BD5;&#x6570;&#x636E;</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#基于第三方库准备测试数据"><span class="toc-nav-number">1.5.</span> <span class="toc-nav-text">&#x57FA;&#x4E8E;&#x7B2C;&#x4E09;&#x65B9;&#x5E93;&#x51C6;&#x5907;&#x6D4B;&#x8BD5;&#x6570;&#x636E;</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#综合运用上述方法准备测试数据"><span class="toc-nav-number">1.6.</span> <span class="toc-nav-text">&#x7EFC;&#x5408;&#x8FD0;&#x7528;&#x4E0A;&#x8FF0;&#x65B9;&#x6CD5;&#x51C6;&#x5907;&#x6D4B;&#x8BD5;&#x6570;&#x636E;</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#准备测试数据的时机"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">&#x51C6;&#x5907;&#x6D4B;&#x8BD5;&#x6570;&#x636E;&#x7684;&#x65F6;&#x673A;</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#实时创建on-the-fly"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">&#x5B9E;&#x65F6;&#x521B;&#x5EFA;&#xFF08;On-the-Fly&#xFF09;</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#提前准备out-of-box"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">&#x63D0;&#x524D;&#x51C6;&#x5907;&#xFF08;Out-of-Box&#xFF09;</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#构造测试数据的痛点及应对"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">&#x6784;&#x9020;&#x6D4B;&#x8BD5;&#x6570;&#x636E;&#x7684;&#x75DB;&#x70B9;&#x53CA;&#x5E94;&#x5BF9;</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#调用封装函数的复杂性"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">&#x8C03;&#x7528;&#x5C01;&#x88C5;&#x51FD;&#x6570;&#x7684;&#x590D;&#x6742;&#x6027;</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#封装函数的版本管理"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">&#x5C01;&#x88C5;&#x51FD;&#x6570;&#x7684;&#x7248;&#x672C;&#x7BA1;&#x7406;</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#统一测试数据生成平台"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">&#x7EDF;&#x4E00;&#x6D4B;&#x8BD5;&#x6570;&#x636E;&#x751F;&#x6210;&#x5E73;&#x53F0;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#总结"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">&#x603B;&#x7ED3;</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#软件测试" title="软件测试">软件测试</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://blog.csdn.net/liuchunming033" target="_blank">CSDN Blog 刘春明</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- 复制添加版权申明-->
+<script>
+    /**/
+    function setClipboardText(event){
+        event.preventDefault();//阻止元素发生默认的行为（例如，当点击提交按钮时阻止对表单的提交）。
+        var node = document.createElement('div');
+        //对documentfragment不熟，不知道怎么获取里面的内容，用了一个比较笨的方式
+        node.appendChild(window.getSelection().getRangeAt(0).cloneContents());
+        //getRangeAt(0)返回对基于零的数字索引与传递参数匹配的选择对象中的范围的引用。对于连续选择，参数应为零。
+        var htmlData = '<div>'
+            + node.innerHTML
+            + '<br /><br />著作权归作者所有。<br />'
+            + '商业转载请联系作者获得授权，非商业转载请注明出处。<br />'
+            + '作者：刘春明 <br />链接：'
+            + location.href
+            + '<br />来源：liuchunming.net<br /><br />'
+            + '</div>';
+        var textData = window.getSelection().getRangeAt(0)
+            + '\n\n著作权归作者所有。\n'
+            + '商业转载请联系作者获得授权，非商业转载请注明出处。\n'
+            + '作者：刘春明\n'
+            + '链接：'
+            + location.href
+            + '来源：liuchunming.net\n\n';
+        if(event.clipboardData){
+            event.clipboardData.setData("text/html", htmlData);
+            //setData(剪贴板格式, 数据) 给剪贴板赋予指定格式的数据。返回 true 表示操作成功。
+            event.clipboardData.setData("text/plain",textData);
+        }
+        else if(window.clipboardData){ //window.clipboardData的作用是在页面上将需要的东西复制到剪贴板上，提供了对于预定义的剪贴板格式的访问，以便在编辑操作中使用。
+            return window.clipboardData.setData("text", textData);
+        }
+    };
+ 
+    document.addEventListener('copy',function(e){
+        setClipboardText(e);
+    });
+</script>
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/liuchunming033">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Chunming Liu 2019 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br />
+                    <!--总访问量统计-->
+                    
+                        <span id="busuanzi_container_site_pv" style="margin-left: 3px;">
+                            总访问量<span id="busuanzi_value_site_pv"></span>次
+                        </span>
+                    
+                    <!--总访问量统计-->
+
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="../../js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="../../js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="../../js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://www.liuchunming.net/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'xxx';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/click_show_text.js"></script>
+<!-- Image to hack wechat -->
+<img src="https://www.liuchunming.net/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
