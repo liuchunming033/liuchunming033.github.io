@@ -287,7 +287,7 @@
 <p>liuchunming是我在Docker Hub 上的账户名。v1是我给这个镜像本次起的版本号。</p>
 <p>接着执行下面的指令就可以镜像push到Docker Hub上了：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker push liuchunming/helloworld:v1</span><br></pre></td></tr></table></figure>
-<p>一旦提交到Docker Hub上，其他人就可以通过<code>docker pull helloworld:v1</code>指令将镜像下载下来了。</p>
+<p>一旦提交到Docker Hub上，其他人就可以通过<code>docker pull liuchunming/helloworld:v1</code>指令将镜像下载下来了。</p>
 <p>在企业内部，也可以搭建一个跟 Docker Hub 类似的镜像存储系统。感兴趣的话，可以查看VMware 的 Harbor 项目。</p>
 <h2 id="进入正在运行的容器中玩玩">进入正在运行的容器中玩玩</h2>
 <p>运行web服务的容器，通常是以后台进程启动的。就是在<code>docker run</code>指令后面加上-d选项。比如以后台方式运行上面的web容器：</p>
