@@ -335,8 +335,48 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --cpu-period=100000 --cpu-quota=20000 -m 300M helloworld</span><br></pre></td></tr></table></figure>
 <p>–cpu-period和–cpu-quota组合使用来限制容器使用的CPU时间。表示在–cpu-period的一段时间内，容器只能被分配到总量为 --cpu-quota 的 CPU 时间。-m选项则限制了容器使用宿主机内存的上限。</p>
 <p>上面启动容器的命令，将容器使用的CPU限制设定在最高20%，内存使用最多是300MB。</p>
+<h2 id="容器的启动-重启-停止与删除">容器的启动、重启、停止与删除</h2>
+<p>前面我们使用过<code>docker ps</code> 查看当前运行中的容器，如果加上 -a 选项，则可以查看运行中和已经停止的所有容器。现在，看一下我的系统中目前的所有容器：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ docker ps -a</span><br><span class="line">CONTAINER ID   IMAGE        COMMAND          CREATED      STATUS                 PORTS                  NAMES</span><br><span class="line">525a8c3fc769   helloworld   &quot;python app.py&quot;  4 hours ago  Up 3 minutes           80/tcp                 hardcore_feistel</span><br><span class="line">1695ed10e2cb   helloworld   &quot;python app.py&quot;  4 hours ago  Up 3 minutes           0.0.0.0:5000-&gt;80/tcp   focused_margulis7</span><br><span class="line">a242ecaf6cf6   helloworld   &quot;python app.py&quot;  5 hours ago  Exited (0) 4 hours ago                        dazzling_khayyam</span><br><span class="line">be0439b30b2a   helloworld   &quot;python app.py&quot;  5 hours ago  Created                                       vigilant_lalande</span><br></pre></td></tr></table></figure>
+<p>从输出中可以看到目前有四个容器，有两个容器处于Up状态，也就是处于运行中的状态，一个容器处于Exited(0)状态，也就是退出状态，一个处于Created状态。</p>
+<p>这里补充说明一下docker ps -a的输出结果，一共包含7列数据，分别是 CONTAINER ID、IMAGE、COMMAND、CREATED、STATUS、PORTS和NAMES。 这些列的含义分别如下所示：</p>
+<ul>
+<li>CONTAINER ID：容器ID，唯一标识容器</li>
+<li>IMAGE：创建容器时所用的镜像</li>
+<li>COMMAND：在容器最后运行的命令</li>
+<li>CREATED：容器创建的时间</li>
+<li>STATUS：容器的状态</li>
+<li>PORTS：对外开放的端口号</li>
+<li>NAMES：容器名（具有唯一性，docker负责命名）<br>
+获取到容器的ID之后，可以对容器的状态进行修改，比如容器1695ed10e2cb进行停止、启动、重启：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker stop 1695ed10e2cb</span><br><span class="line">docker start 1695ed10e2cb</span><br><span class="line">docker restart 1695ed10e2cb</span><br></pre></td></tr></table></figure>
+<p>删除容器，有两种操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker rm 1695ed10e2cb</span><br><span class="line">docker rm -f 1695ed10e2cb</span><br></pre></td></tr></table></figure>
+<p>不带-f选项，只能删除处于非Up状态的容器，带上-f则可以删除处于任何状态下的容器。</p>
+<p>本小节，可以扩展一下Docker中容器状态的流转关系。请看下面这种图：<br>
+<img src="/img/article/container-status.png" alt=""><br>
+这张图对容器的生命周期有了清晰的描述，总结了容器各种状态之间是如何转换的。</p>
+<p>需要注意一点是容器可以先创建容器，稍后再启动。 也就是可以先执行<code>docker create</code> 创建容器（处于 Created 状态），再通过<code>docker start</code> 以后台方式启动容器。 docker run 命令实际上是 docker create 和 docker start 的组合。</p>
+<h2 id="维持容器始终保持运行状态">维持容器始终保持运行状态</h2>
+<p>docker run指令有一个参数<code>--restart</code>，在容器中启动的进程正常退出或发生OOM时， docker 会根据 --restart 的策略判断是否需要重启容器。但如果容器是因为执行 docker stop 或docker kill 退出，则不会自动重启。</p>
+<p>docker支持如下restart策略：</p>
+<ul>
+<li>no – 容器退出时不要自动重启。这个是默认值。</li>
+<li>on-failure[:max-retries] – 只在容器以非0状态码退出时重启。可选的，可以退出docker daemon尝试重启容器的次数。</li>
+<li>always – 不管退出状态码是什么始终重启容器。当指定always时，docker daemon将无限次数地重启容器。容器也会在daemon启动时尝试重启容器，不管容器当时的状态如何。</li>
+<li>unless-stopped – 不管退出状态码是什么始终重启容器。不过当daemon启动时，如果容器之前已经为停止状态，不启动它。</li>
+</ul>
+<p>在每次重启容器之前，不断地增加重启延迟（上一次重启的双倍延迟，从100毫秒开始），来防止影响服务器。这意味着daemon将等待100ms,然后200 ms, 400 ms, 800 ms, 1600 ms等等，直到超过on-failure限制，或执行docker stop或docker rm -f。</p>
+<p>如果容器重启成功（容器启动后并运行至少10秒），然后delay重置为默认的100ms。</p>
+<p>重启策略示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run --restart=always 1695ed10e2cb # restart策略为always，使得容器退出时,docker将重启它。并且是无限制次数重启。</span><br><span class="line">docker run --restart=on-failure:10 redis #restart策略为on-failure,最大重启次数为10的次。容器以非0状态连续退出超过10次，docker将中断尝试重启这个容器。</span><br></pre></td></tr></table></figure>
+<p>可以通过docker inspect来查看已经尝试重启容器了多少次。例如，获取容器1695ed10e2cb的重启次数:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker inspect -f &quot;&#123;&#123; .RestartCount &#125;&#125;&quot; 1695ed10e2cb</span><br></pre></td></tr></table></figure>
+<p>或者获取上一次容器重启时间：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker inspect -f &quot;&#123;&#123; .State.StartedAt &#125;&#125;&quot; 1695ed10e2cb</span><br></pre></td></tr></table></figure>
 <h2 id="总结">总结</h2>
-<p>本篇文章通过非常经典的 Python web应用作为案例，讲解了 Docker 容器使用的主要场景。包括构建镜像、启动镜像、分享镜像、在镜像中操作、在镜像中挂在宿主机目录以及对容器使用的资源进行限制。熟悉了这些操作，你也就基本上摸清了 Docker 容器的核心功能。</p>
+<p>本篇文章通过非常经典的 Python web应用作为案例，讲解了 Docker 容器使用的主要场景。包括构建镜像、启动镜像、分享镜像、在镜像中操作、在镜像中挂载宿主机目录、对容器使用的资源进行限制、管理容器的状态和如何保持容器始终运行。熟悉了这些操作，你也就基本上摸清了 Docker 容器的核心功能。</p>
 
                 <!-- 相关文章 -->
 	           
@@ -407,7 +447,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#构建一个镜像"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">&#x6784;&#x5EFA;&#x4E00;&#x4E2A;&#x955C;&#x50CF;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#运行镜像"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">&#x8FD0;&#x884C;&#x955C;&#x50CF;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#分享镜像"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">&#x5206;&#x4EAB;&#x955C;&#x50CF;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#进入正在运行的容器中玩玩"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">&#x8FDB;&#x5165;&#x6B63;&#x5728;&#x8FD0;&#x884C;&#x7684;&#x5BB9;&#x5668;&#x4E2D;&#x73A9;&#x73A9;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#容器与宿主机之间如何共享文件"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">&#x5BB9;&#x5668;&#x4E0E;&#x5BBF;&#x4E3B;&#x673A;&#x4E4B;&#x95F4;&#x5982;&#x4F55;&#x5171;&#x4EAB;&#x6587;&#x4EF6;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#给容器加上资源限制"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">&#x7ED9;&#x5BB9;&#x5668;&#x52A0;&#x4E0A;&#x8D44;&#x6E90;&#x9650;&#x5236;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#总结"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">&#x603B;&#x7ED3;</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#构建一个镜像"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">&#x6784;&#x5EFA;&#x4E00;&#x4E2A;&#x955C;&#x50CF;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#运行镜像"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">&#x8FD0;&#x884C;&#x955C;&#x50CF;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#分享镜像"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">&#x5206;&#x4EAB;&#x955C;&#x50CF;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#进入正在运行的容器中玩玩"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">&#x8FDB;&#x5165;&#x6B63;&#x5728;&#x8FD0;&#x884C;&#x7684;&#x5BB9;&#x5668;&#x4E2D;&#x73A9;&#x73A9;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#容器与宿主机之间如何共享文件"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">&#x5BB9;&#x5668;&#x4E0E;&#x5BBF;&#x4E3B;&#x673A;&#x4E4B;&#x95F4;&#x5982;&#x4F55;&#x5171;&#x4EAB;&#x6587;&#x4EF6;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#给容器加上资源限制"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">&#x7ED9;&#x5BB9;&#x5668;&#x52A0;&#x4E0A;&#x8D44;&#x6E90;&#x9650;&#x5236;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#容器的启动-重启-停止与删除"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">&#x5BB9;&#x5668;&#x7684;&#x542F;&#x52A8;&#x3001;&#x91CD;&#x542F;&#x3001;&#x505C;&#x6B62;&#x4E0E;&#x5220;&#x9664;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#维持容器始终保持运行状态"><span class="toc-nav-number">8.</span> <span class="toc-nav-text">&#x7EF4;&#x6301;&#x5BB9;&#x5668;&#x59CB;&#x7EC8;&#x4FDD;&#x6301;&#x8FD0;&#x884C;&#x72B6;&#x6001;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#总结"><span class="toc-nav-number">9.</span> <span class="toc-nav-text">&#x603B;&#x7ED3;</span></a></li></ol>
         
         </div>
       </aside>
