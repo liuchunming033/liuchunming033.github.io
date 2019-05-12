@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="刘春明的博客">
+    <meta name="keyword"  content="测试开发，Python">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          通过Docker容器化Python web应用了解容器核心功能 - Chunming Liu | Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://www.liuchunming.net/article/通过Docker容器化Python web应用了解容器核心功能/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="../../css/beantech.min.css">
+
+    <link rel="stylesheet" href="../../css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="../../css/highlight.css">
+
+    <link rel="stylesheet" href="../../css/widget.css">
+
+    <link rel="stylesheet" href="../../css/rocket.css">
+
+    <link rel="stylesheet" href="../../css/signature.css">
+
+    <link rel="stylesheet" href="../../css/toc.css">
+
+    <link rel="stylesheet" href="../../css/valine.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+
+    <!--不蒜子-->
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('/img/article_header/tizi.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Docker" title="Docker">Docker</a>
+                            
+                        </div>
+                        <h1>通过Docker容器化Python web应用了解容器核心功能</h1>
+                        <h2 class="subheading">通过实战了解Docker核心功能</h2>
+
+                        <!--文章访问量统计-->
+                        
+                            <span id="busuanzi_container_page_pv">本文已被阅读过<span id="busuanzi_value_page_pv"></span>次</span>
+                        
+                        <!--文章访问量统计-->
+
+                        <span class="meta">
+                            Posted by Chunming Liu on
+                            2019-05-12
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Chunming Liu</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+                        <li>
+                            <a href="/about/" >About</a>
+                        </li>
+                    
+                        <li>
+                            <a href="/archive/" >Archives</a>
+                        </li>
+                    
+                        <li>
+                            <a href="/tags/" >Tags</a>
+                        </li>
+                    
+
+                    <!-- 
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                     -->
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+                <blockquote>
+<p>本篇文章通过一个典型的Python web应用，带你了解Docker的核心功能。需要依赖一台已经安装了Docker的Linux虚拟机。</p>
+</blockquote>
+<h2 id="构建一个镜像">构建一个镜像</h2>
+<p>首先我们准备一个应用。新建一个本文文件，起名叫 <a href="http://app.py" target="_blank" rel="noopener">app.py</a>，里面写入下面的内容，实现一个简单的web应用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">from flask import Flask</span><br><span class="line">import socket</span><br><span class="line">import os</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/&apos;)</span><br><span class="line">def hello():</span><br><span class="line">    html = &quot;&lt;h3&gt;Hello &#123;name&#125;!&lt;/h3&gt;&quot; \</span><br><span class="line">           &quot;&lt;b&gt;Hostname:&lt;/b&gt; &#123;hostname&#125;&lt;br/&gt;&quot;           </span><br><span class="line">    return html.format(name=os.getenv(&quot;NAME&quot;, &quot;world&quot;), hostname=socket.gethostname())</span><br><span class="line">    </span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    app.run(host=&apos;0.0.0.0&apos;, port=80)</span><br></pre></td></tr></table></figure>
+<p>在这段代码中，使用 Flask 框架启动了一个 Web 服务器，而它唯一的功能是：如果当前环境中有“NAME”这个环境变量，就把它打印在“Hello”后，否则就打印“Hello world”，最后再打印出当前环境的 hostname。<br>
+这个应用的依赖文件requirements.txt存在于与其同级的目录中，内容是：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cat requirements.txt</span><br><span class="line">Flask</span><br></pre></td></tr></table></figure>
+<p>将这样一个应用在容器中跑起来，需要制作一个容器镜像。Docker提供了一种Dockerfile文件，来描述镜像的构建过程。下面的代码存在于与上面的应用（<a href="http://app.py" target="_blank" rel="noopener">app.py</a>）同级目录下的Dockerfile中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"># 使用官方提供的python:3.6-alpine镜像，作为我们这个镜像的基础镜像，这样我们的镜像就有了python3.6环境</span><br><span class="line">FROM python:3.6-alpine</span><br><span class="line"></span><br><span class="line"># 将工作目录切换为 /app</span><br><span class="line">WORKDIR /app</span><br><span class="line"></span><br><span class="line"># 将当前目录下的所有内容复制到镜像的 /app 下</span><br><span class="line">ADD . /app</span><br><span class="line"></span><br><span class="line"># 使用 pip 命令安装这个应用所需要的依赖，RUN 指令就是在容器里执行 shell 命令的意思。</span><br><span class="line">RUN pip install --trusted-host pypi.python.org -r requirements.txt</span><br><span class="line"></span><br><span class="line"># 允许外界访问容器的 80 端口</span><br><span class="line">EXPOSE 80</span><br><span class="line"></span><br><span class="line"># 设置环境变量</span><br><span class="line">ENV NAME World</span><br><span class="line"></span><br><span class="line"># 设置容器进程为：python app.py，即：这个 Python 应用的启动命令</span><br><span class="line">CMD [&quot;python&quot;, &quot;app.py&quot;]</span><br></pre></td></tr></table></figure>
+<p>这个Dockerfile文件的内容，描述了我们所要构建的 Docker 镜像。Dockerfile中每一行都是按顺序处理的。这个Dockerfile中用到的指令的具体含义已经在以注释的方式写在了Dockerfile中。</p>
+<p>需要再详细介绍一下CMD指令。CMD指定了<code>python app.py</code>为这个容器启动后执行的进程。因为Dockerfile中使用WORKDIR切换了容器的工作路径是/app，所以 <a href="http://app.py" target="_blank" rel="noopener">app.py</a> 的实际路径是 /app/app.py。CMD [“python”, “<a href="http://app.py" target="_blank" rel="noopener">app.py</a>”] 等价于 “docker run <imgname> python <a href="http://app.py" target="_blank" rel="noopener">app.py</a>”。</imgname></p>
+<p>另外，在使用 Dockerfile 时，还有一种 ENTRYPOINT 指令。它和 CMD 都是 Docker 容器进程启动所必需的参数，完整执行格式是：“ENTRYPOINT CMD”。</p>
+<p>默认情况下，Docker 会为你提供一个隐含的 ENTRYPOINT，即：<code>/bin/sh -c</code>。所以，在不指定 ENTRYPOINT 时，比如在我们这个例子里，实际上运行在容器里的完整进程是：/bin/sh -c “python <a href="http://app.py" target="_blank" rel="noopener">app.py</a>”，即 CMD 的内容就是 ENTRYPOINT 的参数。正是基于这样的原理，Docker 容器的启动进程为实际为 ENTRYPOINT，而不是 CMD。</p>
+<p>需要注意的是，Dockerfile 里的指令并不都是只在容器内部的操作。就比如 ADD，它指的是把当前目录（即 Dockerfile 所在的目录）里的文件，复制到指定容器内的目录当中。</p>
+<p>根据前面的描述，现在我们的整个应用的目录结构应该如下这样：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ls</span><br><span class="line">Dockerfile  app.py   requirements.txt</span><br></pre></td></tr></table></figure>
+<p>现在我们执行下面的指令构建镜像：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t helloworld .</span><br></pre></td></tr></table></figure>
+<p>其中，-t 的作用是给这个镜像加一个 Tag，即：起一个好听的名字。docker build 会自动加载当前目录下的 Dockerfile 文件，然后按照顺序执行Dockerfile文件中的指令。</p>
+<p>Dockerfile 中的每个指令执行后，都会生成一个对应的镜像层。</p>
+<p>上面的命令执行完成后，就形成了一个镜像。可以通过下面的指令查看：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker image ls</span><br><span class="line"></span><br><span class="line">REPOSITORY    TAG        IMAGE ID      CREATED             SIZE</span><br><span class="line">helloworld    latest     5bacb9617bcf  7 minutes ago       89.8MB</span><br></pre></td></tr></table></figure>
+<p>还可以通过 <code>docker inspect helloworld:latest</code> 查看镜像的元信息。</p>
+<h2 id="运行镜像">运行镜像</h2>
+<p>有了镜像，就可以通过下面的指令来运行容器了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 5000:80 helloworld</span><br></pre></td></tr></table></figure>
+<p>在这一句命令中，镜像名 helloworld 后面，什么都不用写，因为在 Dockerfile 中已经指定了 CMD。否则，我就得把进程的启动命令加在后面：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 5000:80 helloworld python app.py</span><br></pre></td></tr></table></figure>
+<p>如果上面的指令执行后，能够输出下面的内容，则表示容器启动成功了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">* Serving Flask app &quot;app&quot; (lazy loading)</span><br><span class="line">* Environment: production</span><br><span class="line">  WARNING: Do not use the development server in a production environment.</span><br><span class="line">  Use a production WSGI server instead.</span><br><span class="line">* Debug mode: off</span><br><span class="line">* Running on http://0.0.0.0:80/ (Press CTRL+C to quit)</span><br></pre></td></tr></table></figure>
+<p>可以通过运行<code>docker ps</code>指令，查看运行中的容器。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker ps</span><br><span class="line"></span><br><span class="line">CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS                  NAMES</span><br><span class="line">a242ecaf6cf6        helloworld          &quot;python app.py&quot;     3 minutes ago       Up 3 minutes        0.0.0.0:5000-&gt;80/tcp   dazzling_khayyam</span><br></pre></td></tr></table></figure>
+<p>从输出中可以看到，容器的ID，容器是基于哪个镜像的启动的，容器中的进程，容器的启动时间及端口映射情况。</p>
+<p>从现在看，容器已经正确启动，我们使用curl命令通过宿主机的IP和端口号，来访问容器中的web应用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl localhost:5000</span><br><span class="line">&lt;h3&gt;Hello World!&lt;/h3&gt;&lt;b&gt;Hostname:&lt;/b&gt; a242ecaf6cf6&lt;br/&gt;</span><br></pre></td></tr></table></figure>
+<p>还有一种访问容器中应用的方法是使用容器的IP和应用端口号，应用的端口号我们已经在Dockerfile中指定为80，那么容器的IP如何获取呢？</p>
+<p>依然是使用<code>docker inspect CONTAINER ID</code>命令查看容器的元数据。容器的IP地址就在其中。</p>
+<h2 id="分享镜像">分享镜像</h2>
+<p>大家一定用过代码分享平台GitHub，在Docker世界中分享镜像的平台是<a href="https://hub.docker.com/" target="_blank" rel="noopener">Docker Hub</a>，它&quot;学名&quot;叫镜像仓库（Repository）。</p>
+<p>为了能够上传镜像，首先需要注册一个 Docker Hub 账号，然后使用 docker login 命令登录。在push到Docker Hub之前，需要先给镜像指定一个版本号：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker tag helloworld liuchunming033/helloworld:v1</span><br></pre></td></tr></table></figure>
+<p>liuchunming033是我在Docker Hub 上的账户名。v1是我给这个镜像本次起的版本号。</p>
+<p>接着执行下面的指令就可以镜像push到Docker Hub上了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker push liuchunming033/helloworld:v1</span><br></pre></td></tr></table></figure>
+<p>一旦提交到Docker Hub上，其他人就可以通过<code>docker pull helloworld:v1</code>指令将镜像下载下来了。</p>
+<p>在企业内部，也可以搭建一个跟 Docker Hub 类似的镜像存储系统。感兴趣的话，可以查看VMware 的 Harbor 项目。</p>
+<h2 id="进入正在运行的容器中玩玩">进入正在运行的容器中玩玩</h2>
+<p>运行web服务的容器，通常是以后台进程启动的。就是在<code>docker run</code>指令后面加上-d选项。比如以后台方式运行上面的web容器：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 5000:80 helloworld</span><br></pre></td></tr></table></figure>
+<p>如果你想进入到一个正在运行的容器做一些操作，可以通过<code>docker run</code>指令。我们需要先通过<code>docker ps</code>命令查看容器的ID,然后执行下面的命令。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it 1695ed10e2cb75e /bin/sh</span><br></pre></td></tr></table></figure>
+<p>-it选项指的是连接到容器后，启动一个terminal(终端)并开启input(输入)功能。<code>/bin/sh</code>表示进入到容器后执行的命令。现在我们就可以在终端上进行一些操作了，比如在容器中新建一个readme.md文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/app # ps</span><br><span class="line">PID   USER     TIME  COMMAND</span><br><span class="line">    1 root      0:00 python app.py</span><br><span class="line">   24 root      0:00 /bin/sh</span><br><span class="line">   29 root      0:00 ps</span><br><span class="line">/app# touch readme.md</span><br><span class="line">/app# exit</span><br></pre></td></tr></table></figure>
+<p>我们还可以将正在运行的容器，commit成新的镜像。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker commit 1695ed10e2cb75e liuchunming033/helloworld:v2</span><br></pre></td></tr></table></figure>
+<p>docker exec 的实现原理，其实是利用了容器的三大核心技术之一的Namespace。一个进程可以选择加入到某个进程（运行中的容器）已有的 Namespace 当中，从而达到“进入”这个进程所在容器的目的。更细节的原理这里不在细究。</p>
+<h2 id="容器与宿主机之间如何共享文件">容器与宿主机之间如何共享文件</h2>
+<p>容器技术使用了 rootfs 机制和 Mount Namespace，构建出了一个同宿主机完全隔离开的文件系统环境。但是我们使用过程中经常会遇到这样两个问题：</p>
+<ul>
+<li>
+<p>容器里进程新建的文件，怎么才能让宿主机获取到？</p>
+</li>
+<li>
+<p>宿主机上的文件和目录，怎么才能让容器里的进程访问到？</p>
+</li>
+</ul>
+<p>这正是 Docker Volume 要解决的问题：Volume 机制，允许你将宿主机上指定的目录或者文件，挂载到容器里面进行读取和修改。</p>
+<p>在 Docker 项目里，它支持两种 Volume 声明方式，可以把宿主机目录挂载进容器的 /test 目录当中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -v /test ...</span><br><span class="line">docker run -v /home:/test ...</span><br></pre></td></tr></table></figure>
+<p>而这两种声明方式的本质，实际上是相同的：都是把一个宿主机的目录挂载进了容器的 /test 目录。</p>
+<p>只不过，在第一种情况下，由于你并没有显示声明宿主机目录，那么 Docker 就会默认在宿主机上创建一个临时目录 <code>/var/lib/docker/volumes/[VOLUME_ID]/_data</code>，然后把它挂载到容器的 /test 目录上。而在第二种情况下，Docker 就直接把宿主机的 /home 目录挂载到容器的 /test 目录上。</p>
+<p>启动容器时，给他声明一个volume</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -v /test helloworld</span><br></pre></td></tr></table></figure>
+<p>容器启动之后，我们来查看一下这个容器 的Volume 在宿主机上的对应的目录:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker volume ls</span><br><span class="line">DRIVER              VOLUME NAME</span><br><span class="line">local               dc195c8ad14ad505832461d9f37da889c54ef284ebaf777a100e10a932217ad3</span><br></pre></td></tr></table></figure>
+<p>或者执行<code>docker inspect CONTAINER_ID</code>命令查看，命令输出的Mounts字段中Source的值就是宿主机上的目录：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&quot;Mounts&quot;: [</span><br><span class="line">            &#123;</span><br><span class="line">                &quot;Type&quot;: &quot;volume&quot;,</span><br><span class="line">                &quot;Name&quot;: &quot;dc195c8ad14ad505832461d9f37da889c54ef284ebaf777a100e10a932217ad3&quot;,</span><br><span class="line">                &quot;Source&quot;: &quot;/var/lib/docker/volumes/dc195c8ad14ad505832461d9f37da889c54ef284ebaf777a100e10a932217ad3/_data&quot;,</span><br><span class="line">                &quot;Destination&quot;: &quot;/test&quot;,</span><br><span class="line">                &quot;Driver&quot;: &quot;local&quot;,</span><br><span class="line">                &quot;Mode&quot;: &quot;&quot;,</span><br><span class="line">                &quot;RW&quot;: true,</span><br><span class="line">                &quot;Propagation&quot;: &quot;&quot;</span><br><span class="line">            &#125;</span><br><span class="line">        ],</span><br></pre></td></tr></table></figure>
+<p>然后，查看宿主机上的路径：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls /var/lib/docker/volumes/dc195c8ad14ad505832461d9f37da889c54ef284ebaf777a100e10a932217ad3/_data</span><br></pre></td></tr></table></figure>
+<p>这个 _data 文件夹，就是这个容器的 Volume 在宿主机上对应的临时目录了。接下来，我们在容器的 Volume 里，添加一个文件 text.txt：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it cf53b766fa6f /bin/sh</span><br><span class="line">cd test/</span><br><span class="line">touch text.txt</span><br></pre></td></tr></table></figure>
+<p>这时，我们再回到宿主机，就会发现 text.txt 已经出现在了宿主机上对应的临时目录里了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ls /var/lib/docker/volumes/dc195c8ad14ad505832461d9f37da889c54ef284ebaf777a100e10a932217ad3/_data</span><br><span class="line">text.txt</span><br></pre></td></tr></table></figure>
+<p>因为容器运行时产生的文件，在容器停止后将会消失。因此，将容器的目录映射到宿主机的某个目录，一个重要使用场景是持久化容器中产生的文件，比如应用的日志。</p>
+<h2 id="给容器加上资源限制">给容器加上资源限制</h2>
+<p>其实容器是运行的宿主机上的特殊进程，多个容器之间是共享宿主机的操作系统内核的。默认情况下，容器并没有被设定使用操作系统资源的上限。</p>
+<p>有些情况下，我们需要限制容器启动后占用的宿主机操作系统的资源。Docker可以利用Linux Cgroups机制可以给容器设置资源使用限制。</p>
+<p>Linux Cgroups 的全称是 Linux Control Group。它最主要的作用，就是限制一个进程组能够使用的资源上限，包括 CPU、内存、磁盘、网络带宽等等。Docker正是利用这个特性限制容器使用宿主上的CPU、内存。</p>
+<p>下面启动容器的方式，给这个 Python 应用加上 CPU 和 Memory 限制：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --cpu-period=100000 --cpu-quota=20000 -m 300M helloworld</span><br></pre></td></tr></table></figure>
+<p>–cpu-period和–cpu-quota组合使用来限制容器使用的CPU时间。表示在–cpu-period的一段时间内，容器只能被分配到总量为 --cpu-quota 的 CPU 时间。-m选项则限制了容器使用宿主机内存的上限。</p>
+<p>上面启动容器的命令，将容器使用的CPU限制设定在最高20%，内存使用最多是300MB。</p>
+<h2 id="总结">总结</h2>
+<p>本篇文章通过非常经典的 Python web应用作为案例，讲解了 Docker 容器使用的主要场景。包括构建镜像、启动镜像、分享镜像、在镜像中操作、在镜像中挂在宿主机目录以及对容器使用的资源进行限制。熟悉了这些操作，你也就基本上摸清了 Docker 容器的核心功能。</p>
+
+                <!-- 相关文章 -->
+	           
+		          
+
+    <div class="recommended_posts">
+        <h2><span style="font-size:1em">相关文章</span></h2>
+        <ul>
+            
+                <li><a href="https://www.liuchunming.net/article/谈一谈软件测试中的测试数据准备/">谈一谈软件测试中的测试数据准备</a></li>
+            
+                <li><a href="https://www.liuchunming.net/article/Hexo博客入门/">Hexo博客入门</a></li>
+            
+        </ul>
+    </div>
+
+	           
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/article/谈一谈软件测试中的测试数据准备/" data-toggle="tooltip" data-placement="top" title="谈一谈软件测试中的测试数据准备">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                <!--打赏-->
+                <br>
+                <!--分享-->
+                
+                <!--分享-->
+                <br>
+
+                <!--加载valine-->
+                
+
+                <!--加载valine-->                      
+                <!-- require APlayer -->
+                
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+
+            </div>
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#构建一个镜像"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">&#x6784;&#x5EFA;&#x4E00;&#x4E2A;&#x955C;&#x50CF;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#运行镜像"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">&#x8FD0;&#x884C;&#x955C;&#x50CF;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#分享镜像"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">&#x5206;&#x4EAB;&#x955C;&#x50CF;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#进入正在运行的容器中玩玩"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">&#x8FDB;&#x5165;&#x6B63;&#x5728;&#x8FD0;&#x884C;&#x7684;&#x5BB9;&#x5668;&#x4E2D;&#x73A9;&#x73A9;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#容器与宿主机之间如何共享文件"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">&#x5BB9;&#x5668;&#x4E0E;&#x5BBF;&#x4E3B;&#x673A;&#x4E4B;&#x95F4;&#x5982;&#x4F55;&#x5171;&#x4EAB;&#x6587;&#x4EF6;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#给容器加上资源限制"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">&#x7ED9;&#x5BB9;&#x5668;&#x52A0;&#x4E0A;&#x8D44;&#x6E90;&#x9650;&#x5236;</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#总结"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">&#x603B;&#x7ED3;</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Docker" title="Docker">Docker</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://blog.csdn.net/liuchunming033" target="_blank">CSDN Blog 刘春明</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- 复制添加版权申明-->
+<script>
+    /**/
+    function setClipboardText(event){
+        event.preventDefault();//阻止元素发生默认的行为（例如，当点击提交按钮时阻止对表单的提交）。
+        var node = document.createElement('div');
+        //对documentfragment不熟，不知道怎么获取里面的内容，用了一个比较笨的方式
+        node.appendChild(window.getSelection().getRangeAt(0).cloneContents());
+        //getRangeAt(0)返回对基于零的数字索引与传递参数匹配的选择对象中的范围的引用。对于连续选择，参数应为零。
+        var htmlData = '<div>'
+            + node.innerHTML
+            + '<br /><br />著作权归作者所有。<br />'
+            + '商业转载请联系作者获得授权，非商业转载请注明出处。<br />'
+            + '作者：刘春明 <br />链接：'
+            + location.href
+            + '<br />来源：liuchunming.net<br /><br />'
+            + '</div>';
+        var textData = window.getSelection().getRangeAt(0)
+            + '\n\n著作权归作者所有。\n'
+            + '商业转载请联系作者获得授权，非商业转载请注明出处。\n'
+            + '作者：刘春明\n'
+            + '链接：'
+            + location.href
+            + '来源：liuchunming.net\n\n';
+        if(event.clipboardData){
+            event.clipboardData.setData("text/html", htmlData);
+            //setData(剪贴板格式, 数据) 给剪贴板赋予指定格式的数据。返回 true 表示操作成功。
+            event.clipboardData.setData("text/plain",textData);
+        }
+        else if(window.clipboardData){ //window.clipboardData的作用是在页面上将需要的东西复制到剪贴板上，提供了对于预定义的剪贴板格式的访问，以便在编辑操作中使用。
+            return window.clipboardData.setData("text", textData);
+        }
+    };
+ 
+    document.addEventListener('copy',function(e){
+        setClipboardText(e);
+    });
+</script>
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/liuchunming033">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Chunming Liu 2019 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br />
+                    <!--总访问量统计-->
+                    
+                        <span id="busuanzi_container_site_pv" style="margin-left: 3px;">
+                            总访问量<span id="busuanzi_value_site_pv"></span>次
+                        </span>
+                    
+                    <!--总访问量统计-->
+
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="../../js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="../../js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="../../js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://www.liuchunming.net/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'xxx';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/click_show_text.js"></script>
+<!-- Image to hack wechat -->
+<img src="https://www.liuchunming.net/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
