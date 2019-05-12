@@ -170,14 +170,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -280,11 +280,13 @@
 <p>依然是使用<code>docker inspect CONTAINER ID</code>命令查看容器的元数据。容器的IP地址就在其中。</p>
 <h2 id="分享镜像">分享镜像</h2>
 <p>大家一定用过代码分享平台GitHub，在Docker世界中分享镜像的平台是<a href="https://hub.docker.com/" target="_blank" rel="noopener">Docker Hub</a>，它&quot;学名&quot;叫镜像仓库（Repository）。</p>
-<p>为了能够上传镜像，首先需要注册一个 Docker Hub 账号，然后使用 docker login 命令登录。在push到Docker Hub之前，需要先给镜像指定一个版本号：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker tag helloworld liuchunming033/helloworld:v1</span><br></pre></td></tr></table></figure>
-<p>liuchunming033是我在Docker Hub 上的账户名。v1是我给这个镜像本次起的版本号。</p>
+<p>为了能够上传镜像，首先需要注册一个 Docker Hub 账号，然后使用 docker login 命令登录:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ docker login</span><br><span class="line">Login with your Docker ID to push and pull images from Docker Hub. If you don&apos;t have a Docker ID, head over to https://hub.docker.com to create one.</span><br><span class="line">Username: liuchunming</span><br><span class="line">Password:</span><br><span class="line">Login Succeeded</span><br></pre></td></tr></table></figure>
+<p>在push到Docker Hub之前，需要先给镜像指定一个版本号：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker tag helloworld liuchunming/helloworld:v1</span><br></pre></td></tr></table></figure>
+<p>liuchunming是我在Docker Hub 上的账户名。v1是我给这个镜像本次起的版本号。</p>
 <p>接着执行下面的指令就可以镜像push到Docker Hub上了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker push liuchunming033/helloworld:v1</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker push liuchunming/helloworld:v1</span><br></pre></td></tr></table></figure>
 <p>一旦提交到Docker Hub上，其他人就可以通过<code>docker pull helloworld:v1</code>指令将镜像下载下来了。</p>
 <p>在企业内部，也可以搭建一个跟 Docker Hub 类似的镜像存储系统。感兴趣的话，可以查看VMware 的 Harbor 项目。</p>
 <h2 id="进入正在运行的容器中玩玩">进入正在运行的容器中玩玩</h2>
