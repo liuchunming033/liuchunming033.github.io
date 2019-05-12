@@ -14,7 +14,7 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          如何使用Docker容器化Python web应用 - Chunming Liu | Blog
+          通过容器化Python web应用了解Docker容器核心功能 - Chunming Liu | Blog
         
     </title>
 
@@ -98,8 +98,8 @@
                               <a class="tag" href="/tags/#Docker" title="Docker">Docker</a>
                             
                         </div>
-                        <h1>如何使用Docker容器化Python web应用</h1>
-                        <h2 class="subheading">了解Docker容器核心功能</h2>
+                        <h1>通过容器化Python web应用了解Docker容器核心功能</h1>
+                        <h2 class="subheading">通过实战了解Docker核心功能</h2>
 
                         <!--文章访问量统计-->
                         
@@ -177,14 +177,14 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                      -->
@@ -243,18 +243,18 @@
 <p>本篇文章通过一个典型的Python web应用，带你了解Docker的核心功能。需要依赖一台已经安装了Docker的Linux虚拟机。</p>
 </blockquote>
 <h2 id="构建一个镜像">构建一个镜像</h2>
-<p>首先我们准备一个应用。新建一个本文文件，<a href="http://xn--app-uz3e3fv505a.py" target="_blank" rel="noopener">起名叫app.py</a>，里面写入下面的内容，实现一个简单的web应用：</p>
+<p>首先我们准备一个应用。新建一个本文文件，起名叫 <a href="http://app.py" target="_blank" rel="noopener">app.py</a>，里面写入下面的内容，实现一个简单的web应用：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">from flask import Flask</span><br><span class="line">import socket</span><br><span class="line">import os</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">@app.route(&apos;/&apos;)</span><br><span class="line">def hello():</span><br><span class="line">    html = &quot;&lt;h3&gt;Hello &#123;name&#125;!&lt;/h3&gt;&quot; \</span><br><span class="line">           &quot;&lt;b&gt;Hostname:&lt;/b&gt; &#123;hostname&#125;&lt;br/&gt;&quot;           </span><br><span class="line">    return html.format(name=os.getenv(&quot;NAME&quot;, &quot;world&quot;), hostname=socket.gethostname())</span><br><span class="line">    </span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    app.run(host=&apos;0.0.0.0&apos;, port=80)</span><br></pre></td></tr></table></figure>
 <p>在这段代码中，使用 Flask 框架启动了一个 Web 服务器，而它唯一的功能是：如果当前环境中有“NAME”这个环境变量，就把它打印在“Hello”后，否则就打印“Hello world”，最后再打印出当前环境的 hostname。<br>
 这个应用的依赖文件requirements.txt存在于与其同级的目录中，内容是：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cat requirements.txt</span><br><span class="line">Flask</span><br></pre></td></tr></table></figure>
 <p>将这样一个应用在容器中跑起来，需要制作一个容器镜像。Docker提供了一种Dockerfile文件，来描述镜像的构建过程。下面的代码存在于与上面的应用（<a href="http://app.py" target="_blank" rel="noopener">app.py</a>）同级目录下的Dockerfile中。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"># 使用官方提供的python:3.6-alpine镜像，作为我们这个镜像的基础镜像，这样我们的镜像就有了python3.6环境</span><br><span class="line">FROM python:3.6-alpine</span><br><span class="line"></span><br><span class="line"># 将工作目录切换为 /app</span><br><span class="line">WORKDIR /app</span><br><span class="line"></span><br><span class="line"># 将当前目录下的所有内容复制到镜像的 /app 下</span><br><span class="line">ADD . /app</span><br><span class="line"></span><br><span class="line"># 使用 pip 命令安装这个应用所需要的依赖，RUN 指令就是在容器里执行 shell 命令的意思。</span><br><span class="line">RUN pip install --trusted-host pypi.python.org -r requirements.txt</span><br><span class="line"></span><br><span class="line"># 允许外界访问容器的 80 端口</span><br><span class="line">EXPOSE 80</span><br><span class="line"></span><br><span class="line"># 设置环境变量</span><br><span class="line">ENV NAME World</span><br><span class="line"></span><br><span class="line"># 设置容器进程为：python app.py，即：这个 Python 应用的启动命令</span><br><span class="line">CMD [&quot;python&quot;, &quot;app.py&quot;]</span><br></pre></td></tr></table></figure>
-<p>通过这个Dockerfile文件的内容，描述了我们所要构建的 Docker 镜像。Dockerfile中每一行都是按顺序处理的。这个Dockerfile中用到的指令的具体含义已经在以注释的方式写在了Dockerfile中。</p>
-<p>需要再详细描述一下CMD指令。CMD指定了<code>python app.py</code>为这个容器的进程。因为Dockerfile中使用WORKDIR切换了容器的工作路径是/app，<a href="http://xn--app-vs9dw89f.py" target="_blank" rel="noopener">所以app.py</a> 的实际路径是 /app/app.py。CMD [“python”, “<a href="http://app.py" target="_blank" rel="noopener">app.py</a>”] 等价于 “docker run <imgname> python <a href="http://app.py" target="_blank" rel="noopener">app.py</a>”。</imgname></p>
+<p>这个Dockerfile文件的内容，描述了我们所要构建的 Docker 镜像。Dockerfile中每一行都是按顺序处理的。这个Dockerfile中用到的指令的具体含义已经在以注释的方式写在了Dockerfile中。</p>
+<p>需要再详细介绍一下CMD指令。CMD指定了<code>python app.py</code>为这个容器启动后执行的进程。因为Dockerfile中使用WORKDIR切换了容器的工作路径是/app，所以 <a href="http://app.py" target="_blank" rel="noopener">app.py</a> 的实际路径是 /app/app.py。CMD [“python”, “<a href="http://app.py" target="_blank" rel="noopener">app.py</a>”] 等价于 “docker run <imgname> python <a href="http://app.py" target="_blank" rel="noopener">app.py</a>”。</imgname></p>
 <p>另外，在使用 Dockerfile 时，还有一种 ENTRYPOINT 指令。它和 CMD 都是 Docker 容器进程启动所必需的参数，完整执行格式是：“ENTRYPOINT CMD”。</p>
 <p>默认情况下，Docker 会为你提供一个隐含的 ENTRYPOINT，即：<code>/bin/sh -c</code>。所以，在不指定 ENTRYPOINT 时，比如在我们这个例子里，实际上运行在容器里的完整进程是：/bin/sh -c “python <a href="http://app.py" target="_blank" rel="noopener">app.py</a>”，即 CMD 的内容就是 ENTRYPOINT 的参数。正是基于这样的原理，Docker 容器的启动进程为实际为 ENTRYPOINT，而不是 CMD。</p>
-<p>需要注意的是，Dockerfile 里的指令并不都是只容器内部的操作。就比如 ADD，它指的是把当前目录（即 Dockerfile 所在的目录）里的文件，复制到指定容器内的目录当中。</p>
+<p>需要注意的是，Dockerfile 里的指令并不都是只在容器内部的操作。就比如 ADD，它指的是把当前目录（即 Dockerfile 所在的目录）里的文件，复制到指定容器内的目录当中。</p>
 <p>根据前面的描述，现在我们的整个应用的目录结构应该如下这样：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ls</span><br><span class="line">Dockerfile  app.py   requirements.txt</span><br></pre></td></tr></table></figure>
 <p>现在我们执行下面的指令构建镜像：</p>
@@ -271,7 +271,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 5000:80 helloworld python app.py</span><br></pre></td></tr></table></figure>
 <p>如果上面的指令执行后，能够输出下面的内容，则表示容器启动成功了：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">* Serving Flask app &quot;app&quot; (lazy loading)</span><br><span class="line">* Environment: production</span><br><span class="line">  WARNING: Do not use the development server in a production environment.</span><br><span class="line">  Use a production WSGI server instead.</span><br><span class="line">* Debug mode: off</span><br><span class="line">* Running on http://0.0.0.0:80/ (Press CTRL+C to quit)</span><br></pre></td></tr></table></figure>
-<p>可以通过运行<code>docker ps</code>指令，查看容器中的进程。</p>
+<p>可以通过运行<code>docker ps</code>指令，查看运行中的容器。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker ps</span><br><span class="line"></span><br><span class="line">CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS                  NAMES</span><br><span class="line">a242ecaf6cf6        helloworld          &quot;python app.py&quot;     3 minutes ago       Up 3 minutes        0.0.0.0:5000-&gt;80/tcp   dazzling_khayyam</span><br></pre></td></tr></table></figure>
 <p>从输出中可以看到，容器的ID，容器是基于哪个镜像的启动的，容器中的进程，容器的启动时间及端口映射情况。</p>
 <p>从现在看，容器已经正确启动，我们使用curl命令通过宿主机的IP和端口号，来访问容器中的web应用：</p>
@@ -280,17 +280,17 @@
 <p>依然是使用<code>docker inspect CONTAINER ID</code>命令查看容器的元数据。容器的IP地址就在其中。</p>
 <h2 id="分享镜像">分享镜像</h2>
 <p>大家一定用过代码分享平台GitHub，在Docker世界中分享镜像的平台是<a href="https://hub.docker.com/" target="_blank" rel="noopener">Docker Hub</a>，它&quot;学名&quot;叫镜像仓库（Repository）。</p>
-<p>为了能够上传镜像，首先需要注册一个 Docker Hub 账号，然后使用 docker login 命令登录。在push到Docker Hub之前，需要先镜像指定一个版本号：</p>
+<p>为了能够上传镜像，首先需要注册一个 Docker Hub 账号，然后使用 docker login 命令登录。在push到Docker Hub之前，需要先给镜像指定一个版本号：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker tag helloworld liuchunming033/helloworld:v1</span><br></pre></td></tr></table></figure>
 <p>liuchunming033是我在Docker Hub 上的账户名。v1是我给这个镜像本次起的版本号。</p>
 <p>接着执行下面的指令就可以镜像push到Docker Hub上了：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker push liuchunming033/helloworld:v1</span><br></pre></td></tr></table></figure>
-<p>一旦提交到Docker Hub上，其他人就可以通过``docker pull helloworld:v1`指令将镜像下载下来了。</p>
+<p>一旦提交到Docker Hub上，其他人就可以通过<code>docker pull helloworld:v1</code>指令将镜像下载下来了。</p>
 <p>在企业内部，也可以搭建一个跟 Docker Hub 类似的镜像存储系统。感兴趣的话，可以查看VMware 的 Harbor 项目。</p>
 <h2 id="进入正在运行的容器中玩玩">进入正在运行的容器中玩玩</h2>
 <p>运行web服务的容器，通常是以后台进程启动的。就是在<code>docker run</code>指令后面加上-d选项。比如以后台方式运行上面的web容器：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 5000:80 helloworld</span><br></pre></td></tr></table></figure>
-<p>如果你要进入到一个正在运行的容器做一些操作，可以通过<code>docker run</code>指令。我们需要先通过<code>docker ps</code>命令查看容器的ID,然后执行下面的命令。</p>
+<p>如果你想进入到一个正在运行的容器做一些操作，可以通过<code>docker run</code>指令。我们需要先通过<code>docker ps</code>命令查看容器的ID,然后执行下面的命令。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it 1695ed10e2cb75e /bin/sh</span><br></pre></td></tr></table></figure>
 <p>-it选项指的是连接到容器后，启动一个terminal(终端)并开启input(输入)功能。<code>/bin/sh</code>表示进入到容器后执行的命令。现在我们就可以在终端上进行一些操作了，比如在容器中新建一个readme.md文件：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/app # ps</span><br><span class="line">PID   USER     TIME  COMMAND</span><br><span class="line">    1 root      0:00 python app.py</span><br><span class="line">   24 root      0:00 /bin/sh</span><br><span class="line">   29 root      0:00 ps</span><br><span class="line">/app# touch readme.md</span><br><span class="line">/app# exit</span><br></pre></td></tr></table></figure>
@@ -332,6 +332,7 @@
 <p>下面启动容器的方式，给这个 Python 应用加上 CPU 和 Memory 限制：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --cpu-period=100000 --cpu-quota=20000 -m 300M helloworld</span><br></pre></td></tr></table></figure>
 <p>–cpu-period和–cpu-quota组合使用来限制容器使用的CPU时间。表示在–cpu-period的一段时间内，容器只能被分配到总量为 --cpu-quota 的 CPU 时间。-m选项则限制了容器使用宿主机内存的上限。</p>
+<p>上面启动容器的命令，将容器使用的CPU限制设定在最高20%，内存使用最多是300MB。</p>
 <h2 id="总结">总结</h2>
 <p>本篇文章通过非常经典的 Python web应用作为案例，讲解了 Docker 容器使用的主要场景。包括构建镜像、启动镜像、分享镜像、在镜像中操作、在镜像中挂在宿主机目录以及对容器使用的资源进行限制。熟悉了这些操作，你也就基本上摸清了 Docker 容器的核心功能。</p>
 
