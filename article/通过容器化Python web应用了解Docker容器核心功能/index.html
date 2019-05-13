@@ -177,14 +177,14 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                      -->
@@ -292,13 +292,19 @@
 <h2 id="进入正在运行的容器中玩玩">进入正在运行的容器中玩玩</h2>
 <p>运行web服务的容器，通常是以后台进程启动的。就是在<code>docker run</code>指令后面加上-d选项。比如以后台方式运行上面的web容器：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 5000:80 helloworld</span><br></pre></td></tr></table></figure>
-<p>如果你想进入到一个正在运行的容器做一些操作，可以通过<code>docker run</code>指令。我们需要先通过<code>docker ps</code>命令查看容器的ID,然后执行下面的命令。</p>
+<p>如果你想进入到一个正在运行的容器做一些操作，可以通过<code>docker exec</code>指令。我们需要先通过<code>docker ps</code>命令查看容器的ID,然后执行下面的命令。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it 1695ed10e2cb75e /bin/sh</span><br></pre></td></tr></table></figure>
-<p>-it选项指的是连接到容器后，启动一个terminal(终端)并开启input(输入)功能。<code>/bin/sh</code>表示进入到容器后执行的命令。现在我们就可以在终端上进行一些操作了，比如在容器中新建一个readme.md文件：</p>
+<p>-it选项指的是连接到容器后，启动一个terminal(终端)并开启input(输入)功能。<code>/bin/sh</code>表示进入到容器后执行的命令。</p>
+<p>现在我们就可以在终端上进行一些操作了，比如在容器中新建一个readme.md文件：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/app # ps</span><br><span class="line">PID   USER     TIME  COMMAND</span><br><span class="line">    1 root      0:00 python app.py</span><br><span class="line">   24 root      0:00 /bin/sh</span><br><span class="line">   29 root      0:00 ps</span><br><span class="line">/app# touch readme.md</span><br><span class="line">/app# exit</span><br></pre></td></tr></table></figure>
 <p>我们还可以将正在运行的容器，commit成新的镜像。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker commit 1695ed10e2cb75e liuchunming033/helloworld:v2</span><br></pre></td></tr></table></figure>
 <p>docker exec 的实现原理，其实是利用了容器的三大核心技术之一的Namespace。一个进程可以选择加入到某个进程（运行中的容器）已有的 Namespace 当中，从而达到“进入”这个进程所在容器的目的。更细节的原理这里不在细究。</p>
+<p>还有一种进入容器的方法是使用<code>docker attach container_id</code>，不过这种方法不建议使用，因为它有两个明显的缺点：</p>
+<ul>
+<li>当多个窗口同时attach到同一个容器时，所有的窗口都会同步的显示，假如其中的一个窗口发生阻塞时，其它的窗口也会阻塞。</li>
+<li>attach必须是登陆到一个已经运行的容器里，如果从这个容器中exit退出的话，会导致容器停止。</li>
+</ul>
 <h2 id="容器与宿主机之间如何共享文件">容器与宿主机之间如何共享文件</h2>
 <p>容器技术使用了 rootfs 机制和 Mount Namespace，构建出了一个同宿主机完全隔离开的文件系统环境。但是我们使用过程中经常会遇到这样两个问题：</p>
 <ul>
@@ -328,7 +334,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ls /var/lib/docker/volumes/dc195c8ad14ad505832461d9f37da889c54ef284ebaf777a100e10a932217ad3/_data</span><br><span class="line">text.txt</span><br></pre></td></tr></table></figure>
 <p>因为容器运行时产生的文件，在容器停止后将会消失。因此，将容器的目录映射到宿主机的某个目录，一个重要使用场景是持久化容器中产生的文件，比如应用的日志。</p>
 <h2 id="给容器加上资源限制">给容器加上资源限制</h2>
-<p>其实容器是运行的宿主机上的特殊进程，多个容器之间是共享宿主机的操作系统内核的。默认情况下，容器并没有被设定使用操作系统资源的上限。</p>
+<p>其实容器是运行在宿主机上的特殊进程，多个容器之间是共享宿主机的操作系统内核的。默认情况下，容器并没有被设定使用操作系统资源的上限。</p>
 <p>有些情况下，我们需要限制容器启动后占用的宿主机操作系统的资源。Docker可以利用Linux Cgroups机制可以给容器设置资源使用限制。</p>
 <p>Linux Cgroups 的全称是 Linux Control Group。它最主要的作用，就是限制一个进程组能够使用的资源上限，包括 CPU、内存、磁盘、网络带宽等等。Docker正是利用这个特性限制容器使用宿主上的CPU、内存。</p>
 <p>下面启动容器的方式，给这个 Python 应用加上 CPU 和 Memory 限制：</p>
@@ -354,7 +360,7 @@
 <p>删除容器，有两种操作：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker rm 1695ed10e2cb</span><br><span class="line">docker rm -f 1695ed10e2cb</span><br></pre></td></tr></table></figure>
 <p>不带-f选项，只能删除处于非Up状态的容器，带上-f则可以删除处于任何状态下的容器。</p>
-<p>本小节，可以扩展一下Docker中容器状态的流转关系。请看下面这种图：<br>
+<p>Docker容器状态的流转关系，可以下面这张图：<br>
 <img src="/img/article/container-status.jpg" alt=""><br>
 这张图对容器的生命周期有了清晰的描述，总结了容器各种状态之间是如何转换的。</p>
 <p>需要注意一点是容器可以先创建容器，稍后再启动。 也就是可以先执行<code>docker create</code> 创建容器（处于 Created 状态），再通过<code>docker start</code> 以后台方式启动容器。 docker run 命令实际上是 docker create 和 docker start 的组合。</p>
